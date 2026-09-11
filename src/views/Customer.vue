@@ -1,30 +1,127 @@
 <template>
-  <main class="customer-page">
-    <h1>ข้อมูลลูกค้า</h1>
-    <p>รายชื่อลูกค้าทั้งหมด</p>
-    <table>
-      <thead><tr><th>ลำดับ</th><th>รหัสลูกค้า</th><th>ชื่อ</th><th>นามสกุล</th><th>เบอร์โทร</th><th>ชื่อผู้ใช้</th></tr></thead>
-      <tbody><tr v-for="(customer, index) in customers" :key="customer.customer_id"><td>{{ index + 1 }}</td><td>{{ customer.customer_id }}</td><td>{{ customer.firstName }}</td><td>{{ customer.lastName }}</td><td>{{ customer.phone }}</td><td>{{ customer.username }}</td></tr></tbody>
+  <div class="customers-container">
+    <div class="header-row">
+      <h2 class="mb-0">รายชื่อลูกค้า</h2>
+      <router-link to="/add-customer" class="btn btn-primary">เพิ่มลูกค้า</router-link>
+    </div>
+
+    <table class="table table-bordered table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>ลำดับที่</th>
+          <th>รหัสลูกค้า</th>
+          <th>ชื่อ</th>
+          <th>นามสกุล</th>
+          <th>เบอร์โทร</th>
+          <th>ชื่อผู้ใช้</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr v-for="(item, index) in customers" :key="item.customer_id">
+          <td>{{ index + 1 }}</td>
+          <td>{{ item.customer_id }}</td>
+          <td>{{ item.firstName }}</td>
+          <td>{{ item.lastName }}</td>
+          <td>{{ item.phone }}</td>
+          <td>{{ item.username }}</td>
+        </tr>
+      </tbody>
     </table>
-  </main>
+
+    <div v-if="loading" class="text-center">
+      <p>กำลังโหลดข้อมูล...</p>
+    </div>
+
+    <div v-if="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+  </div>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, onMounted } from "vue";
 
 export default {
-  name: 'CustomerList',
-  setup () {
-    const customers = ref([
-      { customer_id: 1, firstName: 'สมชาย', lastName: 'ใจดี', phone: '089-111-2222', username: 'somchai' },
-      { customer_id: 2, firstName: 'สมหญิง', lastName: 'ดีงาม', phone: '081-333-4444', username: 'somying' },
-      { customer_id: 3, firstName: 'อนันต์', lastName: 'สุขใจ', phone: '092-555-6666', username: 'anan' }
-    ])
-    return { customers }
+  name: "CustomerList",
+
+  setup() {
+    const customers = ref([]);
+    const loading = ref(true);
+    const error = ref(null);
+
+    const fetchdata = async () => {
+      try {
+        const response = await fetch("http://localhost/week3_68704511/php.api/show_customer.php");
+
+        if (!response.ok) {
+          throw new Error("ไม่สามารถดึงข้อมูลได้");
+        }
+
+        const result = await response.json();
+
+        if (!result.success || !Array.isArray(result.data)) {
+          throw new Error(result.message || "รูปแบบข้อมูลลูกค้าไม่ถูกต้อง");
+        }
+
+        customers.value = result.data;
+      } catch (err) {
+        error.value = err.message;
+      } finally {
+        loading.value = false;
+      }
+    };
+
+    onMounted(() => {
+      fetchdata();
+    });
+
+    return {
+      customers,
+      loading,
+      error
+    };
   }
-}
+};
 </script>
 
 <style scoped>
-.customer-page { margin: 0 auto; max-width: 1120px; padding: 45px 24px; }.customer-page h1 { color: #173d3b; margin-bottom: 8px; }.customer-page p { color: #74827f; margin-bottom: 24px; }table { background: #fff; border-collapse: collapse; box-shadow: 0 8px 24px rgba(26, 65, 49, .06); width: 100%; }th, td { border: 1px solid #e3ebe7; padding: 14px 16px; text-align: left; }th { background: #e8f5ed; color: #286f4c; font-size: 13px; }td { color: #42534e; font-size: 13px; }
+.customers-container {
+  width: min(900px, calc(100% - 32px));
+  margin: 40px auto;
+  text-align: center;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.btn {
+  border-radius: 10px;
+}
+
+table {
+  width: 100%;
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 12px;
+  border: 1px solid #d9d9d9;
+  text-align: center;
+}
+
+th {
+  color: #fff;
+  background: #2c3e50;
+}
+
+tbody tr:nth-child(even) {
+  background: #f7f7f7;
+}
 </style>
