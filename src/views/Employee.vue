@@ -55,7 +55,7 @@ export default {
 
     const fetchEmployees = async () => {
       try {
-        const response = await fetch('http://localhost/week3_68704511/php.api/show_employee.php')
+        const response = await fetch('http://localhost/week3_68704511/week3/php.api/show_employee.php')
 
         if (!response.ok) {
           throw new Error('ไม่สามารถดึงข้อมูลพนักงานได้')

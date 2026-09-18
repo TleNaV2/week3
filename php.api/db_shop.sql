@@ -70,6 +70,28 @@ INSERT INTO `employee` (`emp_id`, `firstName`, `lastName`, `phone`, `username`, 
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `contacts`
+--
+
+CREATE TABLE `contacts` (
+  `contact_id` int(11) NOT NULL,
+  `subject` varchar(255) NOT NULL,
+  `detail` text NOT NULL,
+  `fullname` varchar(150) NOT NULL,
+  `email` varchar(150) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `contacts`
+--
+
+INSERT INTO `contacts` (`contact_id`, `subject`, `detail`, `fullname`, `email`, `created_at`) VALUES
+(1, 'สอบถามสินค้า', 'ต้องการทราบรายละเอียดและการจัดส่งสินค้า', 'สมชาย ใจดี', 'somchai@gmail.com', '2026-09-04 19:03:00');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `orderdetails`
 --
 

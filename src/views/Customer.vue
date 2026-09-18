@@ -52,7 +52,7 @@ export default {
 
     const fetchdata = async () => {
       try {
-        const response = await fetch("http://localhost/week3_68704511/php.api/show_customer.php");
+        const response = await fetch("http://localhost/week3_68704511/week3/php.api/show_customer.php");
 
         if (!response.ok) {
           throw new Error("ไม่สามารถดึงข้อมูลได้");
