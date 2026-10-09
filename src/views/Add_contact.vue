@@ -4,32 +4,34 @@
 
     <form @submit.prevent="addData">
       <div class="mb-3">
-        <label class="form-label">หัวข้อ</label>
-        <input v-model="contact.subject" class="form-control" placeholder="หัวข้อ" required />
+        <label for="contact-subject" class="form-label">หัวข้อ</label>
+        <input id="contact-subject" v-model.trim="contact.subject" class="form-control" placeholder="หัวข้อ" required />
       </div>
 
       <div class="mb-3">
-        <label class="form-label">รายละเอียด</label>
-        <textarea v-model="contact.detail" class="form-control" rows="4" placeholder="รายละเอียด" required></textarea>
+        <label for="contact-detail" class="form-label">รายละเอียด</label>
+        <textarea id="contact-detail" v-model.trim="contact.detail" class="form-control" rows="4" placeholder="รายละเอียด" required></textarea>
       </div>
 
       <div class="mb-3">
-        <label class="form-label">ชื่อ-นามสกุล</label>
-        <input v-model="contact.fullname" class="form-control" placeholder="ชื่อ-นามสกุล" required />
+        <label for="contact-fullname" class="form-label">ชื่อ-นามสกุล</label>
+        <input id="contact-fullname" v-model.trim="contact.fullname" class="form-control" placeholder="ชื่อ-นามสกุล" required />
       </div>
 
       <div class="mb-3">
-        <label class="form-label">อีเมล</label>
-        <input v-model="contact.email" type="email" class="form-control" placeholder="E-mail" required />
+        <label for="contact-email" class="form-label">อีเมล</label>
+        <input id="contact-email" v-model.trim="contact.email" type="email" class="form-control" placeholder="E-mail" required />
       </div>
 
       <div class="text-center mt-4">
-        <button type="submit" class="btn btn-primary mb-3">บันทึก</button>
-        <button type="reset" class="btn btn-secondary mb-3 ms-2">ยกเลิก</button>
+        <button type="submit" class="btn btn-primary mb-3" :disabled="isSubmitting">
+          {{ isSubmitting ? "กำลังบันทึก..." : "บันทึก" }}
+        </button>
+        <router-link to="/contact" class="btn btn-secondary mb-3 ms-2">ยกเลิก</router-link>
       </div>
     </form>
 
-    <div v-if="message" class="alert alert-info mt-3">
+    <div v-if="message" class="alert alert-danger mt-3" role="alert">
       {{ message }}
     </div>
   </div>
@@ -47,11 +49,17 @@ export default {
         fullname: "",
         email: ""
       },
-      message: ""
+      message: "",
+      isSubmitting: false
     }
   },
   methods: {
     async addData() {
+      if (this.isSubmitting) return
+
+      this.isSubmitting = true
+      this.message = ""
+
       try {
         const res = await fetch(`${API_BASE}/add_contact.php`, {
           method: "POST",
@@ -59,15 +67,21 @@ export default {
           body: JSON.stringify(this.contact)
         })
 
-        const data = await res.json()
-        this.message = data.message
-
-        if (data.success) {
-          this.contact = { subject: "", detail: "", fullname: "", email: "" }
-          this.$router.push('/contact')
+        if (!res.ok) {
+          throw new Error("ไม่สามารถบันทึกข้อมูลติดต่อได้")
         }
+
+        const data = await res.json()
+
+        if (!data.success) {
+          throw new Error(data.message || "เพิ่มข้อมูลติดต่อไม่สำเร็จ")
+        }
+
+        await this.$router.push("/contact")
       } catch (err) {
         this.message = "เกิดข้อผิดพลาด: " + err.message
+      } finally {
+        this.isSubmitting = false
       }
     }
   }
