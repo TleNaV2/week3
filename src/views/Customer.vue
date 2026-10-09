@@ -14,6 +14,7 @@
           <th>นามสกุล</th>
           <th>เบอร์โทร</th>
           <th>ชื่อผู้ใช้</th>
+          <th>จัดการ</th>
         </tr>
       </thead>
 
@@ -25,6 +26,10 @@
           <td>{{ item.lastName }}</td>
           <td>{{ item.phone }}</td>
           <td>{{ item.username }}</td>
+          <td>
+            <router-link :to="`/edit-customer/${item.customer_id}`" class="btn btn-warning btn-sm me-1">แก้ไข</router-link>
+            <button class="btn btn-danger btn-sm" @click="deleteCustomer(item)">ลบ</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -41,6 +46,7 @@
 
 <script>
 import { ref, onMounted } from "vue";
+import { API_BASE } from "../config";
 
 export default {
   name: "CustomerList",
@@ -52,7 +58,7 @@ export default {
 
     const fetchdata = async () => {
       try {
-        const response = await fetch("http://localhost/week3_68704511/week3/php.api/show_customer.php");
+        const response = await fetch(`${API_BASE}/show_customer.php`);
 
         if (!response.ok) {
           throw new Error("ไม่สามารถดึงข้อมูลได้");
@@ -72,6 +78,26 @@ export default {
       }
     };
 
+    const deleteCustomer = async (item) => {
+      if (!window.confirm(`ต้องการลบลูกค้า ${item.firstName} ${item.lastName} ใช่หรือไม่?`)) return;
+
+      try {
+        const response = await fetch(`${API_BASE}/delete_customer.php`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ customer_id: item.customer_id })
+        });
+        const result = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.message || "ลบข้อมูลไม่สำเร็จ");
+        }
+        customers.value = customers.value.filter((c) => c.customer_id !== item.customer_id);
+      } catch (err) {
+        error.value = err.message;
+      }
+    };
+
     onMounted(() => {
       fetchdata();
     });
@@ -79,7 +105,8 @@ export default {
     return {
       customers,
       loading,
-      error
+      error,
+      deleteCustomer
     };
   }
 };

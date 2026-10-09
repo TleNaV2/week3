@@ -18,6 +18,7 @@
           <th>ชื่อ-นามสกุล</th>
           <th>Email</th>
           <th>วันที่สร้าง</th>
+          <th>จัดการ</th>
         </tr>
       </thead>
 
@@ -30,6 +31,10 @@
           <td>{{ contact.fullname }}</td>
           <td>{{ contact.email }}</td>
           <td>{{ formatDate(contact.created_at) }}</td>
+          <td>
+            <router-link :to="`/edit-contact/${contact.contact_id}`" class="btn btn-warning btn-sm me-1">แก้ไข</router-link>
+            <button class="btn btn-danger btn-sm" @click="deleteContact(contact)">ลบ</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -46,6 +51,7 @@
 
 <script>
 import { ref, onMounted } from 'vue'
+import { API_BASE } from '../config'
 
 export default {
   name: 'ContactList',
@@ -68,7 +74,7 @@ export default {
 
     const fetchContacts = async () => {
       try {
-        const response = await fetch('http://localhost/week3_68704511/week3/php.api/show_contact.php')
+        const response = await fetch(`${API_BASE}/show_contact.php`)
 
         if (!response.ok) {
           throw new Error('ไม่สามารถดึงข้อมูลติดต่อเราได้')
@@ -88,6 +94,26 @@ export default {
       }
     }
 
+    const deleteContact = async (contact) => {
+      if (!window.confirm(`ต้องการลบรายการ "${contact.subject}" ใช่หรือไม่?`)) return
+
+      try {
+        const response = await fetch(`${API_BASE}/delete_contact.php`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contact_id: contact.contact_id })
+        })
+        const result = await response.json()
+
+        if (!result.success) {
+          throw new Error(result.message || 'ลบข้อมูลไม่สำเร็จ')
+        }
+        contacts.value = contacts.value.filter((c) => c.contact_id !== contact.contact_id)
+      } catch (err) {
+        error.value = err.message
+      }
+    }
+
     onMounted(() => {
       fetchContacts()
     })
@@ -96,7 +122,8 @@ export default {
       contacts,
       loading,
       error,
-      formatDate
+      formatDate,
+      deleteContact
     }
   }
 }

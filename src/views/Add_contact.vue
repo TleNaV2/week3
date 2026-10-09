@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import { API_BASE } from "../config";
+
 export default {
   data() {
     return {
@@ -51,7 +53,7 @@ export default {
   methods: {
     async addData() {
       try {
-        const res = await fetch("http://localhost/week3_68704511/week3/php.api/add_contact.php", {
+        const res = await fetch(`${API_BASE}/add_contact.php`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(this.contact)

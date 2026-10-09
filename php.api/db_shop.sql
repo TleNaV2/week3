@@ -162,6 +162,12 @@ INSERT INTO `products` (`product_id`, `product_name`, `description`, `price`, `i
 --
 
 --
+-- Indexes for table `contacts`
+--
+ALTER TABLE `contacts`
+  ADD PRIMARY KEY (`contact_id`);
+
+--
 -- Indexes for table `customers`
 --
 ALTER TABLE `customers`
@@ -200,6 +206,12 @@ ALTER TABLE `products`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `contacts`
+--
+ALTER TABLE `contacts`
+  MODIFY `contact_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `customers`

@@ -5,7 +5,7 @@
         <h1>ข้อมูลพนักงาน</h1>
         <p class="lead">รายชื่อพนักงานทั้งหมด</p>
       </div>
-      <router-link to="/add-employee" class="btn btn-primary">เพิ่มพนักงานพนักงาน</router-link>
+      <router-link to="/add-employee" class="btn btn-primary">เพิ่มพนักงาน</router-link>
     </div>
 
     <table class="employee-table">
@@ -17,6 +17,7 @@
           <th>นามสกุล</th>
           <th>เบอร์โทร</th>
           <th>ชื่อผู้ใช้</th>
+          <th>จัดการ</th>
         </tr>
       </thead>
 
@@ -28,6 +29,10 @@
           <td>{{ employee.lastName }}</td>
           <td>{{ employee.phone }}</td>
           <td>{{ employee.username }}</td>
+          <td>
+            <router-link :to="`/edit-employee/${employee.emp_id}`" class="btn btn-warning btn-sm me-1">แก้ไข</router-link>
+            <button class="btn btn-danger btn-sm" @click="deleteEmployee(employee)">ลบ</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -44,6 +49,7 @@
 
 <script>
 import { ref, onMounted } from 'vue'
+import { API_BASE } from '../config'
 
 export default {
   name: 'EmployeeTable',
@@ -55,7 +61,7 @@ export default {
 
     const fetchEmployees = async () => {
       try {
-        const response = await fetch('http://localhost/week3_68704511/week3/php.api/show_employee.php')
+        const response = await fetch(`${API_BASE}/show_employee.php`)
 
         if (!response.ok) {
           throw new Error('ไม่สามารถดึงข้อมูลพนักงานได้')
@@ -75,6 +81,26 @@ export default {
       }
     }
 
+    const deleteEmployee = async (employee) => {
+      if (!window.confirm(`ต้องการลบพนักงาน ${employee.firstName} ${employee.lastName} ใช่หรือไม่?`)) return
+
+      try {
+        const response = await fetch(`${API_BASE}/delete_employee.php`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ emp_id: employee.emp_id })
+        })
+        const result = await response.json()
+
+        if (!result.success) {
+          throw new Error(result.message || 'ลบข้อมูลไม่สำเร็จ')
+        }
+        employees.value = employees.value.filter((e) => e.emp_id !== employee.emp_id)
+      } catch (err) {
+        error.value = err.message
+      }
+    }
+
     onMounted(() => {
       fetchEmployees()
     })
@@ -82,7 +108,8 @@ export default {
     return {
       employees,
       loading,
-      error
+      error,
+      deleteEmployee
     }
   }
 }
