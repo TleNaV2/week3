@@ -153,9 +153,12 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`product_id`, `product_name`, `description`, `price`, `image`, `stock`, `created_at`) VALUES
-(1, 'เสื้อยืดคอกลม', 'เสื้อยืดผ้าฝ้าย 100% สวมใส่สบาย', '199.00', 'tshirt.jpg', 50, '2026-09-04 16:44:34'),
-(2, 'กางเกงยีนส์', 'กางเกงยีนส์ทรงกระบอก สีฟ้าอ่อน', '799.00', 'jeans.jpg', 30, '2026-09-04 16:44:34'),
-(3, 'รองเท้าผ้าใบ', 'รองเท้าผ้าใบสีขาว ใส่ได้ทุกโอกาส', '1299.00', 'sneakers.jpg', 20, '2026-09-04 16:44:34');
+(1, 'เสื้อยืดคอกลม', 'เสื้อยืดสีดำพิมพ์ลาย', '199.00', 'product-shirt.jpg', 50, '2026-09-04 16:44:34'),
+(2, 'กางเกงยีนส์', 'กางเกงยีนส์สีน้ำเงิน', '799.00', 'product-jeans.jpg', 30, '2026-09-04 16:44:34'),
+(3, 'รองเท้าผ้าใบ', 'รองเท้าผ้าใบสไตล์วินเทจ', '1299.00', 'product-sneakers.jpg', 20, '2026-09-04 16:44:34'),
+(4, 'Disney+ Premium', 'บริการสตรีมมิง Disney+ ระยะเวลา 1 เดือน', '99.00', 'disney-plus.jpg', 50, '2026-10-30 03:45:00'),
+(5, 'Grand Theft Auto VI', 'เกม Grand Theft Auto VI', '2490.00', 'gta6.jpg', 10, '2026-10-30 03:45:00'),
+(6, 'Minecraft', 'เกม Minecraft', '899.00', 'minecraft.jpg', 20, '2026-10-30 03:45:00');
 
 --
 -- Indexes for dumped tables
@@ -247,7 +250,7 @@ ALTER TABLE `payments`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

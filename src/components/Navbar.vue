@@ -16,6 +16,12 @@
             <router-link class="nav-link" to="/">Home</router-link>
           </li>
           <li class="nav-item">
+            <router-link class="nav-link" to="/product">Product</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/assets">Assets</router-link>
+          </li>
+          <li class="nav-item">
             <router-link class="nav-link" to="/customer">Customer</router-link>
           </li>
           <li class="nav-item">
@@ -49,5 +55,3 @@ export default {
   name: "Navbar"
 }
 </script>
-
-
